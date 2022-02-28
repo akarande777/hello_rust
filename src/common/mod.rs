@@ -10,17 +10,18 @@ pub enum Compare {
     Equal,
 }
 
-pub trait List<T> {
+pub trait List {
+    type Item: PartialOrd;
     fn len(&self) -> usize;
-    fn get(&self, i: usize) -> T;
-    fn set(&self, i: usize, value: T);
+    fn get(&self, i: usize) -> Self::Item;
+    fn set(&mut self, i: usize, value: Self::Item);
 }
 
-pub struct Sorter<T, L: List<T>> {
-    list: L,
+pub struct Sorter<L: List> {
+    pub list: L,
 }
 
-impl <T, L> Sorter<T, L> where T: PartialOrd, L: List<T> {
+impl<L> Sorter<L> where L: List {
     pub fn compare(&self, i: usize, j: usize) -> Compare {
         let Sorter { list } = self;
         if list.get(i) < list.get(j) {Compare::Smaller}
@@ -28,17 +29,17 @@ impl <T, L> Sorter<T, L> where T: PartialOrd, L: List<T> {
         else {Compare::Equal}
     }
 
-    pub fn swap(&self, i: usize, j: usize) {
+    pub fn swap(&mut self, i: usize, j: usize) {
         let Sorter { list } = self;
         let temp = list.get(i);
         list.set(i, list.get(j));
         list.set(j, temp);
     }
 
-    pub fn apply(&self, algo: Algo) {
+    pub fn sort(&mut self, algo: Algo) {
         match algo {
             Algo::BubbleSort => {
-                bubble_sort::sort::<T, L>(self);
+                bubble_sort::sort::<L>(self);
             },
         }
     }
