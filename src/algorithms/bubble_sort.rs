@@ -1,12 +1,12 @@
 use crate::common::*;
+use std::fmt::Debug;
 
-pub fn sort<T>(sorter: &mut Sorter<T>) where T: List {
-    let list = &mut sorter.list;
-    for i in 1..list.len() {
+pub fn sort<L: List + Debug>(list: &mut L) {
+    for _i in 1..list.len() {
         let mut swapped = false;
         for j in 1..list.len() {
-            if let Compare::Smaller = sorter.compare(j - 1, j) {
-                sorter.swap(i, j);
+            if let Compare::Greater = compare(list, j - 1, j) {
+                swap(list, j - 1, j);
                 swapped = true;
             }
         }
